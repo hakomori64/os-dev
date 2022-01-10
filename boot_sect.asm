@@ -1,24 +1,29 @@
-mov ah, 0x0e
+;
+; 文字列をプリントするブートセクター
+;
+[org 0x7c00]
 
-mov bp, 0x8000
-mov sp, bp
+mov bx, HELLO_MSG
+call print_string
 
-push 'A'
-push 'B'
-push 'C'
+mov bx, GOODBYE_MSG
+call print_string
 
-pop bx
-mov al, bl
-int 0x10
-
-pop bx
-mov al, bl
-int 0x10
-
-mov al, [0x7ffe]
-int 0x10
+mov dx, 0x1fb6
+call print_hex
 
 jmp $
 
+%include "print_string.asm"
+%include "print_hex.asm"
+
+; Data
+HELLO_MSG:
+    db 'Hello, World!',0
+
+GOODBYE_MSG:
+    db 'Goodbye!',0
+
 times 510 - ($ - $$) db 0
+
 dw 0xaa55
